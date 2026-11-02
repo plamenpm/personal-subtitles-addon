@@ -12,6 +12,10 @@
   },
   "dependencies": {
     "express": "^5.1.0",
-    "stremio-addon-sdk": "^1.6.10"
+    "stremio-addon-sdk": "1.6.10"
+  },
+  "overrides": {
+    "path-to-regexp": "0.1.13",
+    "tmp": "0.2.7"
   }
 }
