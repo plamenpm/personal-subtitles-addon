@@ -1,0 +1,17 @@
+{
+  "name": "personal-subtitles-addon",
+  "version": "1.0.0",
+  "description": "Personal Bulgarian subtitles addon for Stremio",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "stremio-addon-sdk": "^1.6.10"
+  }
+}
