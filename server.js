@@ -1,7 +1,7 @@
-import express from "express";
-import { addonBuilder } from "stremio-addon-sdk";
 
-const app = express();
+import sdk from "stremio-addon-sdk";
+
+const { addonBuilder, serveHTTP } = sdk;
 const PORT = process.env.PORT || 10000;
 
 const OWNER = "plamenpm";
@@ -33,7 +33,9 @@ async function getSubtitleFiles() {
     `https://api.github.com/repos/${OWNER}/${REPO}/git/trees/${BRANCH}?recursive=1`;
 
   const response = await fetch(apiUrl, {
-    headers: { "Accept": "application/vnd.github+json" }
+    headers: {
+      Accept: "application/vnd.github+json"
+    }
   });
 
   if (!response.ok) {
@@ -48,14 +50,20 @@ async function getSubtitleFiles() {
   );
 
   cacheTime = Date.now();
+
   return cachedFiles;
 }
 
 builder.defineSubtitlesHandler(async ({ type, id }) => {
-  if (type !== "series") return { subtitles: [] };
+  if (type !== "series") {
+    return { subtitles: [] };
+  }
 
   const parts = id.split(":");
-  if (parts.length < 3) return { subtitles: [] };
+
+  if (parts.length < 3) {
+    return { subtitles: [] };
+  }
 
   const season = Number(parts[1]);
   const episode = Number(parts[2]);
@@ -70,6 +78,7 @@ builder.defineSubtitlesHandler(async ({ type, id }) => {
     const subtitles = files
       .filter(file => {
         const match = file.path.match(/S(\d{1,2})E(\d{1,2})/i);
+
         return match &&
           Number(match[1]) === season &&
           Number(match[2]) === episode;
@@ -94,14 +103,6 @@ builder.defineSubtitlesHandler(async ({ type, id }) => {
   }
 });
 
-const { getRouter } = builder.getInterface();
+serveHTTP(builder.getInterface(), { port: PORT });
 
-app.use(getRouter());
-
-app.get("/health", (req, res) => {
-  res.send("Personal Subtitles Addon is running");
-});
-
-app.listen(PORT, () => {
-  console.log(`Addon running on port ${PORT}`);
-});
+console.log(`Addon running on port ${PORT}`);
